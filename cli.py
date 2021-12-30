@@ -48,9 +48,9 @@ def arguments() -> bool:
 
 def show_help(function: Callable[..., Any]) -> Any:
     """
-    Display help message
+     Display help message
 
-   run(f"{argv[0]} --help", confirm=False)
+    run(f"{argv[0]} --help", confirm=False)
     """
     from typer.testing import CliRunner
 
@@ -219,7 +219,7 @@ def select_demo():
         "Three shalt be the number thou shalt count, and the number of the counting shall be three.",
         "Four shalt thou not count, nor either count thou two, excepting that thou then proceed to three.",
         "Five is right out.",
-       "Once the number three, being the third number, be reached,",
+        "Once the number three, being the third number, be reached,",
         "then, lobbest thou thy Holy Hand Grenade of Antioch towards thy foe,",
         "who, being naughty in My sight, shall snuff it.",
     )
@@ -280,4 +280,3 @@ def demo():
 
 if __name__ == "__main__":
     typer_run(demo)
-

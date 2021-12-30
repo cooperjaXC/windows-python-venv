@@ -62,4 +62,3 @@ def run_script(
         _ = subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError as _:  # err:
         pass
-

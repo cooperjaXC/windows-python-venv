@@ -1,5 +1,5 @@
 #!/usr/bin/env python
- 
+
 """
 \b
 Virtual Environment Management utility
@@ -13,22 +13,22 @@ TODO:
     Build initial README.md
     Display password hint
 """
- 
+
 # https://python-packaging.readthedocs.io/en/latest/index.html
 # https://www.geeksforgeeks.org/command-line-scripts-python-packaging
 # https://pythonhosted.org/an_example_pypi_project/setuptools.html
 # https://packaging.python.org/tutorials/packaging-projects
- 
+
 import platform
 from pathlib import Path
 from shutil import rmtree
 import subprocess
- 
- 
+
+
 VENV_PATH = Path("./venv")
 PYTHON = "python"
- 
- 
+
+
 '''
 def setup(package_name: str) -> None:
     """
@@ -67,27 +67,27 @@ def setup(package_name: str) -> None:
     (path / "LICENSE").touch(exist_ok=True)
     (path / "setup.py").touch(exist_ok=True)
 '''
- 
- 
+
+
 def remove(path: Path) -> None:
-    """ Remove file or directory specified by path """
+    """Remove file or directory specified by path"""
     if path.exists():
         if path.is_dir():
             rmtree(path)
         else:
             path.unlink()
- 
- 
+
+
 def modified_after(path1: Path, path2: Path) -> bool:
-    """ Return if path1 has a modify time after path2 """
+    """Return if path1 has a modify time after path2"""
     if path1.exists() and path2.exists():
         return path1.stat().st_mtime > path2.stat().st_mtime
     return False
- 
- 
+
+
 def clean() -> None:
     """Remove temporary files"""
- 
+
     remove(VENV_PATH)
     remove(Path("build"))
     remove(Path("dist"))
@@ -95,12 +95,12 @@ def clean() -> None:
         remove(path)
     for path in Path(".").rglob("__pycache__"):
         remove(path)
- 
- 
+
+
 def run(command):
     subprocess.run(command, shell=True, check=True)
- 
- 
+
+
 def activate_command() -> str:
     """Return command to activate virtual environment"""
     if platform.system() == "Windows":
@@ -111,26 +111,34 @@ def activate_command() -> str:
         source = ". "
         activate_path = VENV_PATH / "bin/activate"
         separator = "; "
- 
+
     return f"{source}{activate_path}{separator}"
 
 
 def get_python_path():
-    python_path = Path('python_path')
+    python_path = Path("python_path")
     if python_path.exists():
-        with python_path.open('r') as io:
+        with python_path.open("r") as io:
             return io.read()
 
     result = input("python_path: ")
-    with python_path.open('w') as io:
+    with python_path.open("w") as io:
         io.write(result)
-    return result 
- 
+    return result
+
+
+def python_interpreter_location():
+    """This handy function will quickly tell you the path
+    where your current python interpreter is located on your machine"""
+    location = str(sys.executable)
+    print(location)
+    return location
+
 
 def main() -> None:
     """
     Make virtual environment
- 
+
     Create requirements.in if it doesn't exist.
     Clean venv if requirements.in was modified after venv.
     Create venv if it doesn't exist.
@@ -140,24 +148,23 @@ def main() -> None:
     """
     requirements_in_path = Path("./requirements.in")
     requirements_txt_path = Path("./requirements.txt")
- 
+
     if not requirements_in_path.exists():
         requirements_in_path.touch()
     elif modified_after(requirements_in_path, VENV_PATH):
         clean()
- 
+
     activate = activate_command()
- 
-    PYTHON =get_python_path() # input("python_path: ")
- 
+
+    PYTHON = get_python_path()  # input("python_path: ")
+
     run(f"{PYTHON} -m venv {VENV_PATH}")
     run(f"{activate} python -m pip install --upgrade pip setuptools wheel pip-tools")
     run(f"{activate} python -m pip install -r {requirements_in_path}")
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
-    #run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
-    #run(f"{activate} {PYTHON} -m pip install -r {requirements_txt_path}")
- 
- 
+    # run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
+    # run(f"{activate} {PYTHON} -m pip install -r {requirements_txt_path}")
+
+
 if __name__ == "__main__":
     main()
-
