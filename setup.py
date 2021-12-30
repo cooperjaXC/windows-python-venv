@@ -113,8 +113,20 @@ def activate_command() -> str:
         separator = "; "
  
     return f"{source}{activate_path}{separator}"
+
+
+def get_python_path():
+    python_path = Path('python_path')
+    if python_path.exists():
+        with python_path.open('r') as io:
+            return io.read()
+
+    result = input("python_path: ")
+    with python_path.open('w') as io:
+        io.write(result)
+    return result 
  
- 
+
 def main() -> None:
     """
     Make virtual environment
@@ -136,7 +148,7 @@ def main() -> None:
  
     activate = activate_command()
  
-    PYTHON = input("python_path: ")
+    PYTHON =get_python_path() # input("python_path: ")
  
     run(f"{PYTHON} -m venv {VENV_PATH}")
     run(f"{activate} python -m pip install --upgrade pip setuptools wheel pip-tools")
