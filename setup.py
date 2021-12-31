@@ -146,7 +146,8 @@ def main() -> None:
 
     PYTHON = python_interpreter_path()
 
-    run(f"{PYTHON} -m venv {VENV_PATH}")
+    # run(f"{PYTHON} -m venv {VENV_PATH}")
+    run(f'"{PYTHON}" -m venv {VENV_PATH}')
     run(f"{activate} python -m pip install --upgrade pip setuptools wheel pip-tools")
     run(f"{activate} python -m pip install -r {requirements_in_path}")
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
