@@ -23,6 +23,7 @@ import platform
 from pathlib import Path
 from shutil import rmtree
 import subprocess
+from sys import executable
 
 
 VENV_PATH = Path("./venv")
@@ -80,8 +81,8 @@ def remove(path: Path) -> None:
 
 def modified_after(path1: Path, path2: Path) -> bool:
     """Return if path1 has a modify time after path2"""
-    if path1.exists() and path2.exists():
-        return path1.stat().st_mtime > path2.stat().st_mtime
+    if path1.exists():
+        return not path2.exists() or path1.stat().st_mtime > path2.stat().st_mtime
     return False
 
 
@@ -115,24 +116,9 @@ def activate_command() -> str:
     return f"{source}{activate_path}{separator}"
 
 
-def get_python_path():
-    python_path = Path("python_path")
-    if python_path.exists():
-        with python_path.open("r") as io:
-            return io.read()
-
-    result = input("python_path: ")
-    with python_path.open("w") as io:
-        io.write(result)
-    return result
-
-
-def python_interpreter_location():
-    """This handy function will quickly tell you the path
-    where your current python interpreter is located on your machine"""
-    location = str(sys.executable)
-    print(location)
-    return location
+def python_interpreter_path() -> str:
+    """Return the path of current python interpreter"""
+    return str(executable)
 
 
 def main() -> None:
@@ -153,17 +139,19 @@ def main() -> None:
         requirements_in_path.touch()
     elif modified_after(requirements_in_path, VENV_PATH):
         clean()
+    else:
+        return
 
     activate = activate_command()
 
-    PYTHON = get_python_path()  # input("python_path: ")
+    PYTHON = python_interpreter_path()
 
     run(f"{PYTHON} -m venv {VENV_PATH}")
     run(f"{activate} python -m pip install --upgrade pip setuptools wheel pip-tools")
     run(f"{activate} python -m pip install -r {requirements_in_path}")
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
     # run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
-    # run(f"{activate} {PYTHON} -m pip install -r {requirements_txt_path}")
+    # run(f"{activate} python -m pip install -r {requirements_txt_path}")
 
 
 if __name__ == "__main__":
