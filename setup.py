@@ -153,6 +153,7 @@ def main() -> None:
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
     # run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
     # run(f"{activate} python -m pip install -r {requirements_txt_path}")
+    print("Venv setup executed.")
 
 
 if __name__ == "__main__":
