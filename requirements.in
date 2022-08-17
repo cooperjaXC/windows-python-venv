@@ -1,3 +1,5 @@
+# Note: `requirements.in` can accept comments.
 typer
 icecream
+# ccaoa  # Internal Child Care Aware of America repository. See https://github.com/ccaoa/ccaoa-mapping
 git+ssh://git@github.com/ccaoa/ccaoa-mapping.git#egg=ccaoa
