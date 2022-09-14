@@ -162,9 +162,9 @@ def main() -> None:
             "\nUse custom workaround."
         )
         run(f'"{PYTHON}" -m venv {VENV_PATH} --without-pip')
-        whl = list(Path(ensurepip.__path__[0]).glob("_bundled/pip*.whl"))[0]
+        whl = next(Path(ensurepip.__path__[0]).glob("_bundled/pip*.whl"))
         # # Could also be
-        # whl = next(Path(ensurepip.__path__[0]).glob("_bundled/pip*.whl")))
+        # whl = list(Path(ensurepip.__path__[0]).glob("_bundled/pip*.whl"))[0]
         print("Your pip wheel file to use:", whl)
         # All variables set; moving on to executing venv pip install.
         run(
