@@ -143,11 +143,9 @@ def main() -> None:
         return
 
     activate = activate_command()
-
     PYTHON = python_interpreter_path()
-    # print(PYTHON)
-    # # https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
-    # run(f"{PYTHON} -m venv {VENV_PATH}")
+
+    # https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
     try:
         run(f'"{PYTHON}" -m venv {VENV_PATH}')
         run(
@@ -172,8 +170,6 @@ def main() -> None:
         )
     run(f"{activate} python -m pip install -r {requirements_in_path}")
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
-    # run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
-    # run(f"{activate} python -m pip install -r {requirements_txt_path}")
     print("Venv setup executed.")
 
 
