@@ -1,5 +1,7 @@
 # Setup python virtual environments for Windows
 
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+
 To run the script test.py with a virtual python environment, 
 double click/execute the test.bat file.
 That's it.
