@@ -6,7 +6,7 @@ Virtual Environment Management utility
     venv clean
     venv setup
     venv [venv]
- 
+
 \b
 TODO:
     Add global config
@@ -29,12 +29,11 @@ import ensurepip
 VENV_PATH = Path("./venv")
 PYTHON = "python"
 
-
 '''
 def setup(package_name: str) -> None:
     """
     Setup package (venv, setup.py, git, tests)
- 
+
     Assumes directory structure:
       <PACKAGE>
       |-- <PACKAGE>/
@@ -52,14 +51,14 @@ def setup(package_name: str) -> None:
     """
     # TODO: use LICENSE templates
     # TODO: use README.md templates
- 
+
     path = Path.cwd()
- 
+
     if not (path / ".git").exists():
         run("git init", shell=True, check=True)
     if not (path / ".gitignore").exists():
         write_gitignore()
- 
+
     (path / package_name).mkdir(exist_ok=True)
     (path / package_name / "__init__.py").touch(exist_ok=True)
     (path / "tests").mkdir(exist_ok=True)
@@ -132,19 +131,52 @@ def main() -> None:
     Install modules in requirements.in
     Write installed modules to requirements.txt
     """
-    requirements_in_path = Path("./requirements.in")
-    requirements_txt_path = Path("./requirements.txt")
+    # 1) Establish paths
+    # ROOT; what is the current active path?
+    root_dir = Path(".")  # Path("./py_venv")  #
+    # PY_VENV; what is the venv's home directory?
+    # If win-py-venv is being used as a subdirectory within other code, create the venv inside a "./py_venv" directory.
+    py_venv_dir = root_dir / "py_venv"
 
+    # REQUIREMENTS.IN; what are your base project requirements?
+    # The requirements.in file defaults to being located outside the "./py_venv" directory.
+    # # This is so that the user can define the requirements at the project-level directory.
+    requirements_in_path = root_dir / "requirements.in"  # Path("./requirements.in")
+    # Search for existing instances of `requirements.in`
     if not requirements_in_path.exists():
+        # Search in the other directory for it.
+        if (py_venv_dir / "requirements.in").exists():
+            requirements_in_path = py_venv_dir / "requirements.in"
+    if not requirements_in_path.exists():
+        # If the requirements_in_path still does not exist,
+        # # point the target directory of the requirements.in file to the root directory.
+        requirements_in_path = root_dir / "requirements.in"
+        # Create an empty requirements file in the root directory.
         requirements_in_path.touch()
     elif modified_after(requirements_in_path, VENV_PATH):
+        # If the requirements.in file exists and has been edited since this venv creation script last ran *or* is new,
+        # # create / update the venv.
         clean()
     else:
+        # If the requirements.in file exists and has not been edited since this venv creation script last ran, pass.
+        print("No changes to your 'requirements.in' file.\nYour venv is up to date.")
         return
 
+    # REQUIREMENTS.TXT; what does the carbon copy of your virtual enviropnment look like?
+    # The requirements.txt file defaults to being located inside the "./py_venv" directory.
+    # # This is so that the user can find the full requirements readout after the venv is created,
+    # # but it is not confusingly included at the project-level directory.
+    requirements_txt_path = py_venv_dir / "requirements.txt"  # Path("./py_venv/requirements.txt")
+    # Search for existing instances of `requirements.txt`
+    if not requirements_txt_path.exists():
+        # The root directory will become the default location for the requirements.txt whether it exists or not.
+        requirements_txt_path = root_dir / "requirements.txt"
+
+    # PYTHON INTERPRETER
     activate = activate_command()
     PYTHON = python_interpreter_path()
 
+    # 2) Create the VENV
     # https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
     try:
         run(f'"{PYTHON}" -m venv {VENV_PATH}')
@@ -170,6 +202,8 @@ def main() -> None:
         )
     run(f"{activate} python -m pip install -r {requirements_in_path}")
     run(f"{activate} python -m pip freeze > {requirements_txt_path}")
+    # run(f"{activate} pip-compile {requirements_in_path} -o {requirements_txt_path}")
+    # run(f"{activate} python -m pip install -r {requirements_txt_path}")
     print("Venv setup executed.")
 
 
