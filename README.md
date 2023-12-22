@@ -21,3 +21,6 @@ Tip: use the latest version of python you have available.
 
 ### Notes
 - Conda environments may experience issues installing with `ssl` DLL issues.
+See this [StackOverflow resource](https://stackoverflow.com/questions/54175042/python-3-7-anaconda-environment-import-ssl-dll-load-fail-error/60405693#60405693) 
+and this repository's corresponding [GitHub Issue](https://github.com/cooperjaXC/windows-python-venv/issues/4)
+for more help.
